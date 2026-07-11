@@ -1,0 +1,42 @@
+@import "tailwindcss";
+
+@keyframes heroGradientShift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.hero-gradient-bg {
+  background: linear-gradient(
+    135deg,
+    #f5f0eb 0%,
+    #ede8f5 25%,
+    #e8f0f5 50%,
+    #f0f5e8 75%,
+    #f5f0eb 100%
+  );
+  background-size: 300% 300%;
+  animation: heroGradientShift 18s ease infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-gradient-bg {
+    animation: none;
+    background-position: 0% 50%;
+  }
+}
+
+
+
+@layer base {
+  html, body, #root {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+  }
+  body {
+    font-family: 'Open Sauce One', -apple-system, BlinkMacSystemFont, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
