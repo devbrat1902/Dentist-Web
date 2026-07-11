@@ -33,14 +33,14 @@ const ABOUT_ELENA     = 'https://images.unsplash.com/photo-1527613426441-4da1747
 // ─────────────────────────────────────────────────────────────────────────────
 // BEFORE/AFTER GALLERY IMAGES  (unique — not used on any other section/page)
 // ─────────────────────────────────────────────────────────────────────────────
-const BA_WHITENING_BEFORE   = 'https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=800&q=85&auto=format&fit=crop';
-const BA_WHITENING_AFTER    = 'https://images.unsplash.com/photo-1500917293891-ef795e70e1f6?w=800&q=85&auto=format&fit=crop';
-const BA_VENEERS_BEFORE     = 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=800&q=85&auto=format&fit=crop';
-const BA_VENEERS_AFTER      = 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=800&q=85&auto=format&fit=crop';
-const BA_INVISALIGN_BEFORE  = 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=800&q=85&auto=format&fit=crop';
-const BA_INVISALIGN_AFTER   = 'https://images.unsplash.com/photo-1554151228-14d9def656e4?w=800&q=85&auto=format&fit=crop';
-const BA_IMPLANTS_BEFORE    = 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=800&q=85&auto=format&fit=crop';
-const BA_IMPLANTS_AFTER     = 'https://images.unsplash.com/photo-1586297135537-94bc9ba060aa?w=800&q=85&auto=format&fit=crop';
+const BA_WHITENING_BEFORE   = '/images/before-after/teeth-whitening-before.png';
+const BA_WHITENING_AFTER    = '/images/before-after/teeth-whitening-after.png';
+const BA_VENEERS_BEFORE     = '/images/before-after/veneers-before.png';
+const BA_VENEERS_AFTER      = '/images/before-after/veneers-after.png';
+const BA_INVISALIGN_BEFORE  = '/images/before-after/invisalign-before.png';
+const BA_INVISALIGN_AFTER   = '/images/before-after/invisalign-after.png';
+const BA_IMPLANTS_BEFORE    = '/images/before-after/implants-before.png';
+const BA_IMPLANTS_AFTER     = '/images/before-after/implants-after.png';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // DATA CONSTANTS
