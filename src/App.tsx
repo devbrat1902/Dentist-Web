@@ -120,21 +120,24 @@ function useMaskPositions(
   return positions;
 }
 
-/** Calculates the render width of the image if scaled to fill the section height */
-function useImageWidth(imageUrl: string, sectionHeight: number): number {
-  const [imageWidth, setImageWidth] = useState(0);
+/** Calculates the render dimensions of the image if scaled to cover the section */
+function useImageDimensions(imageUrl: string, sectionWidth: number, sectionHeight: number): { w: number, h: number } {
+  const [dims, setDims] = useState({ w: 0, h: 0 });
 
   useEffect(() => {
-    if (!imageUrl || sectionHeight === 0) return;
+    if (!imageUrl || sectionHeight === 0 || sectionWidth === 0) return;
     const img = new Image();
     img.onload = () => {
-      const renderWidth = img.naturalWidth * (sectionHeight / img.naturalHeight);
-      setImageWidth(renderWidth);
+      const scale = Math.max(sectionWidth / img.naturalWidth, sectionHeight / img.naturalHeight);
+      setDims({
+        w: img.naturalWidth * scale,
+        h: img.naturalHeight * scale
+      });
     };
     img.src = imageUrl;
-  }, [imageUrl, sectionHeight]);
+  }, [imageUrl, sectionWidth, sectionHeight]);
 
-  return imageWidth;
+  return dims;
 }
 
 interface RevealResult {
@@ -182,7 +185,7 @@ function useStaggeredReveal(_count: number, threshold = 0.15): RevealResult {
 interface MaskedCardProps {
   bgImage: string;
   position: MaskPosition;
-  imageWidth: number;
+  imageDims: { w: number, h: number };
   focalX: number;
   className?: string;
   children?: React.ReactNode;
@@ -193,19 +196,19 @@ interface MaskedCardProps {
 function MaskedCard({
   bgImage,
   position,
-  imageWidth,
+  imageDims,
   focalX,
   className = '',
   children,
   cardRef,
   style,
 }: MaskedCardProps) {
-  const overflow = imageWidth > position.sw ? imageWidth - position.sw : 0;
+  const overflow = imageDims.w > position.sw ? imageDims.w - position.sw : 0;
   const focalOffset = overflow * focalX;
 
   const bgStyle: React.CSSProperties = {
     backgroundImage: `url(${bgImage})`,
-    backgroundSize: `auto ${position.sh}px`,
+    backgroundSize: `${imageDims.w}px ${imageDims.h}px`,
     backgroundPosition: `-${position.x + focalOffset}px -${position.y}px`,
     backgroundRepeat: 'no-repeat',
   };
@@ -428,20 +431,20 @@ function Section1() {
     [s1Reveal.containerRef]
   );
 
-  const [sectionHeight, setSectionHeight] = useState(0);
+  const [sectionDims, setSectionDims] = useState({ w: 0, h: 0 });
   useEffect(() => {
     const el = section1Ref.current;
     if (!el) return;
-    setSectionHeight(el.getBoundingClientRect().height);
+    setSectionDims({ w: el.getBoundingClientRect().width, h: el.getBoundingClientRect().height });
     const ro = new ResizeObserver(() => {
-      setSectionHeight(el.getBoundingClientRect().height);
+      setSectionDims({ w: el.getBoundingClientRect().width, h: el.getBoundingClientRect().height });
     });
     ro.observe(el);
     return () => ro.disconnect();
   }, []);
 
   const positions = useMaskPositions(section1Ref, cardRefs);
-  const imageWidth = useImageWidth(HERO_IMAGE, sectionHeight);
+  const imageDims = useImageDimensions(HERO_IMAGE, sectionDims.w, sectionDims.h);
 
   const emptyPos: MaskPosition = { x: 0, y: 0, sw: 0, sh: 0 };
 
@@ -459,7 +462,7 @@ function Section1() {
           key={label}
           bgImage={HERO_IMAGE}
           position={positions[i] ?? emptyPos}
-          imageWidth={imageWidth}
+          imageDims={imageDims}
           focalX={focalX}
           className="w-full h-14 md:h-20 shrink-0 rounded-xl md:rounded-2xl overflow-hidden relative"
           cardRef={(el) => { cardRefs.current[i] = el; }}
@@ -475,17 +478,16 @@ function Section1() {
       <MaskedCard
         bgImage={HERO_IMAGE}
         position={positions[3] ?? emptyPos}
-        imageWidth={imageWidth}
+        imageDims={imageDims}
         focalX={focalX}
         className="w-full flex-1 min-h-0 rounded-xl md:rounded-2xl overflow-hidden relative flex flex-col justify-between p-4 md:p-7"
         cardRef={(el) => { cardRefs.current[3] = el; }}
         style={s1Reveal.getAnimStyle(3)}
       >
         {/* Top-left text */}
-        <div className="text-black text-xs md:text-sm font-semibold leading-4 md:leading-5 max-w-[200px] md:max-w-[300px] z-10 shrink-0">
-          We wish to provide professional dental services<br />
-          that match the current technologies
-        </div>
+        <p className="text-black text-xs md:text-sm font-semibold leading-4 md:leading-5 max-w-[240px] md:max-w-[340px] z-10 shrink-0 mb-4 md:mb-6">
+          We wish to provide professional dental services that match the current technologies
+        </p>
 
         <div className="flex items-end justify-between z-10 mt-auto shrink-0">
           {/* Bottom-left block */}
@@ -532,20 +534,20 @@ function Section2() {
     [s2Reveal.containerRef]
   );
 
-  const [sectionHeight, setSectionHeight] = useState(0);
+  const [sectionDims, setSectionDims] = useState({ w: 0, h: 0 });
   useEffect(() => {
     const el = section2Ref.current;
     if (!el) return;
-    setSectionHeight(el.getBoundingClientRect().height);
+    setSectionDims({ w: el.getBoundingClientRect().width, h: el.getBoundingClientRect().height });
     const ro = new ResizeObserver(() => {
-      setSectionHeight(el.getBoundingClientRect().height);
+      setSectionDims({ w: el.getBoundingClientRect().width, h: el.getBoundingClientRect().height });
     });
     ro.observe(el);
     return () => ro.disconnect();
   }, []);
 
   const positions = useMaskPositions(section2Ref, cardRefs);
-  const imageWidth = useImageWidth(SECTION2_IMAGE, sectionHeight);
+  const imageDims = useImageDimensions(SECTION2_IMAGE, sectionDims.w, sectionDims.h);
 
   const emptyPos: MaskPosition = { x: 0, y: 0, sw: 0, sh: 0 };
 
@@ -559,7 +561,7 @@ function Section2() {
         <MaskedCard
           bgImage={SECTION2_IMAGE}
           position={positions[0] ?? emptyPos}
-          imageWidth={imageWidth}
+          imageDims={imageDims}
           focalX={focalX}
           className="rounded-xl md:rounded-2xl overflow-hidden relative min-h-[160px] md:min-h-0"
           cardRef={(el) => { cardRefs.current[0] = el; }}
@@ -577,7 +579,7 @@ function Section2() {
         <MaskedCard
           bgImage={SECTION2_IMAGE}
           position={positions[1] ?? emptyPos}
-          imageWidth={imageWidth}
+          imageDims={imageDims}
           focalX={focalX}
           className="md:row-span-2 rounded-xl md:rounded-2xl overflow-hidden relative min-h-[200px] md:min-h-0"
           cardRef={(el) => { cardRefs.current[1] = el; }}
@@ -603,7 +605,7 @@ function Section2() {
         <MaskedCard
           bgImage={SECTION2_IMAGE}
           position={positions[2] ?? emptyPos}
-          imageWidth={imageWidth}
+          imageDims={imageDims}
           focalX={focalX}
           className="rounded-xl md:rounded-2xl overflow-hidden relative min-h-[160px] md:min-h-0"
           cardRef={(el) => { cardRefs.current[2] = el; }}
@@ -621,7 +623,7 @@ function Section2() {
         <MaskedCard
           bgImage={SECTION2_IMAGE}
           position={positions[3] ?? emptyPos}
-          imageWidth={imageWidth}
+          imageDims={imageDims}
           focalX={focalX}
           className="col-span-1 md:col-span-2 rounded-xl md:rounded-2xl overflow-hidden relative min-h-[200px] md:min-h-0"
           cardRef={(el) => { cardRefs.current[3] = el; }}
